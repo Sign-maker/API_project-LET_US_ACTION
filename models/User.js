@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { handleSaveError, setUpdateSettings } from "./hooks.js";
-import { emailRegexp, subscriptionList } from "../constants/user-constants.js";
+import { emailRegexp, genderList } from "../constants/user-constants.js";
 
 const userSchema = new Schema(
   {
@@ -14,10 +14,14 @@ const userSchema = new Schema(
       required: [true, "Email is required"],
       unique: true,
     },
-    subscription: {
+    name: {
       type: String,
-      enum: subscriptionList,
-      default: subscriptionList[0],
+      default: null,
+    },
+    gender: {
+      type: String,
+      enum: genderList,
+      default: genderList[0],
     },
     avatarURL: { type: String },
     token: {

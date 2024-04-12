@@ -19,12 +19,12 @@ const signup = async (req, res) => {
 
   const avatarURL = gravatar.url(req.body.email, { s: 250, d: "mp" });
 
-  const { email, subscription } = await authServices.signup({
+  const { email } = await authServices.signup({
     ...req.body,
     avatarURL,
   });
 
-  res.status(201).json({ user: { email, subscription } });
+  res.status(201).json({ user: { email } });
 };
 
 const signin = async (req, res) => {
@@ -51,7 +51,7 @@ const signin = async (req, res) => {
 
   res.json({
     token,
-    user: { email: result.email, subscription: result.subscription },
+    user: { email: result.email },
   });
 };
 
@@ -63,19 +63,16 @@ const signout = async (req, res) => {
 };
 
 const getCurrent = (req, res) => {
-  const { email, subscription } = req.user;
-  res.json({ email, subscription });
+  const { email } = req.user;
+  res.json({ email });
 };
 
-const updateSubscription = async (req, res) => {
+const updateUser = async (req, res) => {
   const { _id } = req.user;
 
-  const { email, subscription } = await authServices.updateUser(
-    { _id },
-    req.body
-  );
+  const updatedUser = await authServices.updateUser({ _id }, req.body);
 
-  res.json({ user: { email, subscription } });
+  res.json({ user: updatedUser });
 };
 
 const updateAvatar = async (req, res) => {
@@ -107,6 +104,6 @@ export default {
   signin: ctrlWrapper(signin),
   getCurrent: ctrlWrapper(getCurrent),
   signout: ctrlWrapper(signout),
-  updateSubscription: ctrlWrapper(updateSubscription),
+  updateUser: ctrlWrapper(updateUser),
   updateAvatar: ctrlWrapper(updateAvatar),
 };

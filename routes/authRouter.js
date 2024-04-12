@@ -8,13 +8,13 @@ import { upload } from "../middlewares/upload.js";
 const userRouter = express.Router();
 
 userRouter.post(
-  "/register",
+  "/signup",
   validateBody(userSchemas.userSignUpSchema),
   authController.signup
 );
 
 userRouter.post(
-  "/login",
+  "/signin",
   validateBody(userSchemas.userSignInSchema),
   authController.signin
 );
@@ -26,8 +26,8 @@ userRouter.post("/logout", authenticate, authController.signout);
 userRouter.patch(
   "/",
   authenticate,
-  validateBody(userSchemas.userUpdateSubscriptionSchema),
-  authController.updateSubscription
+  validateBody(userSchemas.userUpdateSchema),
+  authController.updateUser
 );
 
 userRouter.patch(
