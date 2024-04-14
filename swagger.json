@@ -30,7 +30,7 @@
   ],
   "basePath": "/api",
   "paths": {
-    "/user/signup": {
+    "/users/signup": {
       "post": {
         "tags": ["User"],
         "summary": "User registration",
@@ -62,7 +62,7 @@
         }
       }
     },
-    "/user/signin": {
+    "/users/signin": {
       "post": {
         "tags": ["User"],
         "summary": "User login",
@@ -100,7 +100,7 @@
         }
       }
     },
-    "/user/logout": {
+    "/users/logout": {
       "post": {
         "tags": ["User"],
         "summary": "User logout",
@@ -126,7 +126,7 @@
         }
       }
     },
-    "/user/current": {
+    "/users/current": {
       "get": {
         "tags": ["User"],
         "summary": "Get information about the current user",
@@ -152,7 +152,7 @@
         }
       }
     },
-    "/user/avatar": {
+    "/users/avatar": {
       "patch": {
         "tags": ["User"],
         "summary": "Upload or update user avatar",
@@ -195,7 +195,7 @@
         }
       }
     },
-    "/user": {
+    "/users": {
       "patch": {
         "tags": ["User"],
         "summary": "Update user information",
@@ -239,7 +239,7 @@
       }
     },
     "/water-rate": {
-      "post": {
+      "patch": {
         "tags": ["WaterRate"],
         "summary": "Set daily water consumption rate for user",
         "security": [{ "Bearer": [] }],
