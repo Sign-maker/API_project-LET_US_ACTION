@@ -1,0 +1,589 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "WaterTracker API",
+    "description": "API for managing user water consumption",
+    "version": "1.0.12"
+  },
+  "servers": [{ "url": "https://water-tracker-api-6z23.onrender.com/" }],
+  "tags": [
+    {
+      "name": "User",
+      "description": "Information about user"
+    },
+    {
+      "name": "WaterRate",
+      "description": "Calculation of the daily rate of water consumption"
+    },
+    {
+      "name": "Water",
+      "description": "Editing of consumed water"
+    },
+    {
+      "name": "Today",
+      "description": "Calculation of consumed water for the current day"
+    },
+    {
+      "name": "Month",
+      "description": "Getting information of consumed water for the selected month"
+    }
+  ],
+  "basePath": "/api",
+  "paths": {
+    "/users/signup": {
+      "post": {
+        "tags": ["User"],
+        "summary": "User registration",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSignUpSchema"
+              },
+              "example": {
+                "email": "example@example.com",
+                "password": "password123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New User Registered"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "409": {
+            "description": "Email in use"
+          }
+        }
+      }
+    },
+    "/users/signin": {
+      "post": {
+        "tags": ["User"],
+        "summary": "User login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSignInSchema"
+              },
+              "example": {
+                "email": "example@example.com",
+                "password": "password123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User is logged in",
+            "headers": {
+              "Authorization": {
+                "type": "string",
+                "description": "JWT token for authentication"
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Email or password is wrong"
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "post": {
+        "tags": ["User"],
+        "summary": "User logout",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The token issued to the current user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User is logged out"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/users/current": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get information about the current user",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The token issued to the current user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Information found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/users/avatar": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Upload or update user avatar",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The token issued to the current user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "File to upload as user avatar"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Avatar uploaded/updated successfully"
+          },
+          "400": {
+            "description": "No attached file"
+          }
+        }
+      }
+    },
+    "/users": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update user information",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The token issued to the current user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateSchema"
+              },
+              "example": {
+                "email": "example@example.com",
+                "password": "password123",
+                "oldPassword": "password123",
+                "gender": "male",
+                "name": "John"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User information updated successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/water-rate": {
+      "patch": {
+        "tags": ["WaterRate"],
+        "summary": "Set daily water consumption rate for user",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The token issued to the current user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterRateSchema"
+              },
+              "example": {
+                "waterRate": "1500"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Daily water consumption rate set successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/water": {
+      "post": {
+        "tags": ["Water"],
+        "summary": "Add water consumption record for signed in user",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The token issued to the current user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterRateSchema"
+              },
+              "example": {
+                "waterVolume": "1500",
+                "date": "YYYY-MM-DDTHH:MM:SS.SSSZ"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Water consumption record added successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/water/:id": {
+      "patch": {
+        "tags": ["Water"],
+        "summary": "Update water consumption record for signed in user",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The token issued to the current user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the water consumption record to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterRateSchema"
+              },
+              "example": {
+                "waterVolume": "1500",
+                "date": "YYYY-MM-DDTHH:MM:SS.SSSZ"
+              },
+              "responses": {
+                "200": {
+                  "description": "Water consumption record updated successfully"
+                },
+                "400": {
+                  "description": "Bad request"
+                },
+                "401": {
+                  "description": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Water"],
+        "summary": "Delete water consumption record for signed in user",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The token issued to the current user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the water consumption record to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Water consumption record deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/water/{today}": {
+      "get": {
+        "tags": ["Today"],
+        "summary": "Get today's water consumption details",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The token issued to the current user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "day",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "description": "The specific date to retrieve water consumption details for"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Today's water consumption details retrieved successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/water/{month}": {
+      "get": {
+        "tags": ["Month"],
+        "summary": "Get water consumption details for selected month",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The token issued to the current user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "description": "Month for which to retrieve water consumption details, formatted as YYYY-MM"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Water consumption details for selected month retrieved successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserSignUpSchema": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            "description": "User's email address"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 64,
+            "description": "User's password, must be between 8 and 64 characters"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "UserSignInSchema": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            "description": "User's email address for login"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 64,
+            "description": "User's password for login"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "UserUpdateSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 32,
+            "description": "User's name, maximum of 32 characters"
+          },
+          "email": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            "description": "User's email address"
+          },
+          "oldPassword": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 64,
+            "description": "User's old password, for authentication during update"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 64,
+            "description": "User's new password, must be between 8 and 64 characters"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["male", "female", "other"],
+            "description": "User's gender"
+          }
+        }
+      },
+      "WaterRateSchema": {
+        "type": "object",
+        "properties": {
+          "waterRate": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 15000,
+            "description": "Daily water consumption rate in milliliters, must be between 1 and 15000"
+          }
+        },
+        "required": ["waterRate"]
+      },
+      "WaterNotesSchema": {
+        "type": "object",
+        "properties": {
+          "waterVolume": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5000,
+            "description": "Volume of water consumed, must be between 1 and 5000 milliliters"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time when the water consumption was recorded"
+          }
+        },
+        "required": ["waterVolume", "date"]
+      }
+    }
+  }
+}
