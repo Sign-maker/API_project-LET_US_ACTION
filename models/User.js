@@ -16,7 +16,7 @@ const userSchema = new Schema(
     },
     name: {
       type: String,
-      default: null,
+      default: "",
     },
     gender: {
       type: String,
@@ -24,6 +24,10 @@ const userSchema = new Schema(
       default: genderList[0],
     },
     avatarURL: { type: String },
+    dailyNorma: {
+      type: Number,
+      default: 2,
+    },
     token: {
       type: String,
       default: null,

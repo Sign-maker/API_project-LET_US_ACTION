@@ -17,6 +17,7 @@ const userUpdateSchema = Joi.object({
   oldPassword: Joi.string().min(8).max(64),
   password: Joi.string().min(8).max(64),
   gender: Joi.string().valid(...genderList),
+  dailyNorma: Joi.number().min(0).max(15),
 });
 
 export default {

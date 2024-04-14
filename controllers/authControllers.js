@@ -11,6 +11,13 @@ import { AVATAR_IMG_SIZES } from "../constants/user-constants.js";
 const { JWT_SECRET } = process.env;
 const avatarsPath = path.resolve("public", "avatars");
 
+const makeToken = (id) => {
+  const payload = { id };
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "20H" });
+
+  return token;
+};
+
 const signup = async (req, res) => {
   const user = await authServices.findUser({ email: req.body.email });
   if (user) {
@@ -19,12 +26,27 @@ const signup = async (req, res) => {
 
   const avatarURL = gravatar.url(req.body.email, { s: 250, d: "mp" });
 
-  const { email } = await authServices.signup({
+  const newUser = await authServices.signup({
     ...req.body,
     avatarURL,
   });
 
-  res.status(201).json({ user: { email } });
+  const token = makeToken(newUser._id);
+
+  const newUserWithToken = await authServices.updateUser(newUser._id, {
+    token,
+  });
+
+  res.status(201).json({
+    user: {
+      name: newUserWithToken.name,
+      email: newUserWithToken.email,
+      gender: newUserWithToken.gender,
+      avatraURL: newUserWithToken.avatarURL,
+      dailyNorma: newUserWithToken.dailyNorma,
+    },
+    token: newUserWithToken.token,
+  });
 };
 
 const signin = async (req, res) => {
@@ -44,35 +66,57 @@ const signin = async (req, res) => {
   }
 
   const { _id } = user;
-  const payload = { id: _id };
-  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "20H" });
+  const token = makeToken(_id);
 
-  const result = await authServices.updateUser({ _id }, { token });
+  const userWithToken = await authServices.updateUser(_id, { token });
 
   res.json({
-    token,
-    user: { email: result.email },
+    user: {
+      name: userWithToken.name,
+      email: userWithToken.email,
+      gender: userWithToken.gender,
+      avatraURL: userWithToken.avatarURL,
+      dailyNorma: userWithToken.dailyNorma,
+    },
+    token: userWithToken.token,
   });
 };
 
 const signout = async (req, res) => {
   const { _id } = req.user;
-  await authServices.updateUser({ _id }, { token: null });
+  await authServices.updateUser(_id, { token: null });
 
-  res.status(204).send();
+  res.sendStatus(204);
 };
 
 const getCurrent = (req, res) => {
-  const { email } = req.user;
-  res.json({ email });
+  const user = req.user;
+  res.json({
+    user: {
+      name: user.name,
+      email: user.email,
+      gender: user.gender,
+      avatraURL: user.avatarURL,
+      dailyNorma: user.dailyNorma,
+    },
+    token: user.token,
+  });
 };
 
 const updateUser = async (req, res) => {
   const { _id } = req.user;
+  //добавить проверку старого пароля при замене на новый и записи нового пароля в бд (с хеширование)
+  const updatedUser = await authServices.updateUser(_id, req.body);
 
-  const updatedUser = await authServices.updateUser({ _id }, req.body);
-
-  res.json({ user: updatedUser });
+  res.json({
+    user: {
+      name: updatedUser.name,
+      email: updatedUser.email,
+      gender: updatedUser.gender,
+      avatraURL: updatedUser.avatarURL,
+      dailyNorma: updatedUser.dailyNorma,
+    },
+  });
 };
 
 const updateAvatar = async (req, res) => {
