@@ -20,8 +20,17 @@ const userUpdateSchema = Joi.object({
   dailyNorma: Joi.number().min(0).max(15),
 });
 
+const waterRateSchema = Joi.object({
+  dailyNorma: Joi.number()
+    .required()
+    .min(1)
+    .max(15)
+    .message({ "any.required": "missing required dailyNorma field" }),
+});
+
 export default {
   userSignUpSchema,
   userSignInSchema,
   userUpdateSchema,
+  waterRateSchema,
 };

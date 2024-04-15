@@ -323,7 +323,7 @@
         }
       }
     },
-    "/water/:id": {
+    "/water/{id}": {
       "patch": {
         "tags": ["Water"],
         "summary": "Update water consumption record for signed in user",
@@ -561,7 +561,7 @@
           "waterRate": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 15000,
+            "maximum": 15,
             "description": "Daily water consumption rate in milliliters, must be between 1 and 15000"
           }
         },
