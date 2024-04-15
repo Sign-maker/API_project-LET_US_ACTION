@@ -18,7 +18,7 @@ const waterSchema = new Schema(
   {
     date: {
       type: Date,
-      match: regexSchemas.dateRegex,
+      match: dateRegexp,
       required: [true, "date is required"],
     },
     dailyNorma: {
