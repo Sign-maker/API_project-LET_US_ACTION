@@ -5,6 +5,7 @@ import "dotenv/config";
 import mongoose from "mongoose";
 
 import userRouter from "./routes/authRouter.js";
+import { calcDeilyWaterMiddleware } from "./middlewares/calcDeilyWaterMiddleware.js"; // Імпорт мідлвари для розрахунку води
 
 const app = express();
 const { PORT, DB_HOST } = process.env;
@@ -14,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-app.use("/api/users", userRouter);
+app.use("/api/users", calcDeilyWaterMiddleware, userRouter); // Використання мідлвари для розрахунку води перед обробкою запиту
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
