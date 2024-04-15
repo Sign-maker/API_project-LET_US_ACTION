@@ -30,7 +30,7 @@
   ],
   "basePath": "/api",
   "paths": {
-    "/users/signup": {
+    "api/users/signup": {
       "post": {
         "tags": ["User"],
         "summary": "User registration",
@@ -62,7 +62,7 @@
         }
       }
     },
-    "/users/signin": {
+    "api/users/signin": {
       "post": {
         "tags": ["User"],
         "summary": "User login",
@@ -100,7 +100,7 @@
         }
       }
     },
-    "/users/logout": {
+    "api/users/logout": {
       "post": {
         "tags": ["User"],
         "summary": "User logout",
@@ -126,7 +126,7 @@
         }
       }
     },
-    "/users/current": {
+    "api/users/current": {
       "get": {
         "tags": ["User"],
         "summary": "Get information about the current user",
@@ -152,7 +152,7 @@
         }
       }
     },
-    "/users/avatar": {
+    "api/users/avatar": {
       "patch": {
         "tags": ["User"],
         "summary": "Upload or update user avatar",
@@ -195,7 +195,7 @@
         }
       }
     },
-    "/users": {
+    "api/users": {
       "patch": {
         "tags": ["User"],
         "summary": "Update user information",
@@ -238,7 +238,7 @@
         }
       }
     },
-    "/water-rate": {
+    "api/water-rate": {
       "patch": {
         "tags": ["WaterRate"],
         "summary": "Set daily water consumption rate for user",
@@ -280,7 +280,7 @@
         }
       }
     },
-    "/water": {
+    "api/water": {
       "post": {
         "tags": ["Water"],
         "summary": "Add water consumption record for signed in user",
@@ -323,7 +323,7 @@
         }
       }
     },
-    "/water/:id": {
+    "api/water/{id}": {
       "patch": {
         "tags": ["Water"],
         "summary": "Update water consumption record for signed in user",
@@ -408,7 +408,7 @@
         }
       }
     },
-    "/water/{today}": {
+    "api/water/{today}": {
       "get": {
         "tags": ["Today"],
         "summary": "Get today's water consumption details",
@@ -447,7 +447,7 @@
         }
       }
     },
-    "/water/{month}": {
+    "api/water/{month}": {
       "get": {
         "tags": ["Month"],
         "summary": "Get water consumption details for selected month",
@@ -561,7 +561,7 @@
           "waterRate": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 15000,
+            "maximum": 15,
             "description": "Daily water consumption rate in milliliters, must be between 1 and 15000"
           }
         },
