@@ -26,7 +26,7 @@ const waterSchema = new Schema(
       default: 2000,
       required: [true, "dailyNorma is required"],
     },
-    entries: [notesSchema],
+    waterNotes: [notesSchema],
     totalVolume: {
       type: Number,
       default: 0,
