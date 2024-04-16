@@ -28,8 +28,7 @@ const updateWaterSchemas = Joi.object({
     .messages({ "any.required": "missing required id field" }),
 });
 
-const schemas = {
+export default {
   waterSchemas,
   updateWaterSchemas,
 };
-module.exports = { schemas };
