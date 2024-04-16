@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { dateRegexp } from "../constants/user-constants.js";
 
-const waterSchemas = Joi.object({
+const waterSchema = Joi.object({
   waterVolume: Joi.number()
     .min(1)
     .max(5000)
@@ -13,7 +13,7 @@ const waterSchemas = Joi.object({
     .messages({ "any.required": "missing required time field" }),
 });
 
-const updateWaterSchemas = Joi.object({
+const updateWaterSchema = Joi.object({
   waterVolume: Joi.number()
     .min(1)
     .max(5000)
@@ -28,8 +28,8 @@ const updateWaterSchemas = Joi.object({
     .messages({ "any.required": "missing required id field" }),
 });
 
-const schemas = {
-  waterSchemas,
-  updateWaterSchemas,
+const waterSchemas = {
+  waterSchema,
+  updateWaterSchema,
 };
-module.exports = { schemas };
+export default waterSchemas;
