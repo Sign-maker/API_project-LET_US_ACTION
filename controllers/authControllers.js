@@ -7,6 +7,7 @@ import gravatar from "gravatar";
 import fs from "fs/promises";
 import Jimp from "jimp";
 import { AVATAR_IMG_SIZES } from "../constants/user-constants.js";
+import { updateDailyNorma } from "../services/waterServices.js";
 
 const { JWT_SECRET } = process.env;
 const avatarsPath = path.resolve("public", "avatars");
@@ -143,6 +144,28 @@ const updateAvatar = async (req, res) => {
   res.json({ avatarURL });
 };
 
+const updateWaterRate = async (req, res) => {
+  const { _id } = req.user;
+  const { waterRate, dailyNorma } = req.body;
+
+  if (waterRate > 15) {
+    throw HttpError(400, "The daily rate can be a maximum of 15 l");
+  }
+
+  const updatedUser = await updateUser(_id, { dailyNorma }, { new: true });
+
+  if (!updatedUser) {
+    throw HttpError(404, "User not found");
+  }
+
+  const norma = await updateDailyNorma({ owner: _id, dailyNorma });
+  if (!norma) {
+    throw HttpError(404);
+  }
+
+  res.json({ waterRate });
+};
+
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
@@ -150,4 +173,5 @@ export default {
   signout: ctrlWrapper(signout),
   updateUser: ctrlWrapper(updateUser),
   updateAvatar: ctrlWrapper(updateAvatar),
+  updateWaterRate: ctrlWrapper(updateWaterRate),
 };

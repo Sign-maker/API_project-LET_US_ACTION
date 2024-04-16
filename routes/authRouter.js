@@ -44,4 +44,11 @@ userRouter.patch(
   authController.updateAvatar
 );
 
+userRouter.patch(
+  "/waterrate",
+  authenticate,
+  validateBody(userSchemas.waterRateSchema),
+  authController.updateWaterRate
+);
+
 export default userRouter;
