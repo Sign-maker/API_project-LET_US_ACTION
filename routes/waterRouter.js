@@ -1,4 +1,3 @@
-
 import express from "express";
 import validateBody from "../helpers/validateBody";
 import waterSchemas from "../schemas/waterSchemas";
@@ -30,7 +29,7 @@ waterRouter.delete(
 
 waterRouter.get("/today", authenticate, waterController.getByDay);
 
-waterRouter.get("/month/:month", authenticate, waterController.getByMonth);
+waterRouter.get("/month/", authenticate, waterController.getByMonth);
 
 export default waterRouter;
 
@@ -63,4 +62,3 @@ export default waterRouter;
 //     },
 //   ],
 // };
-
