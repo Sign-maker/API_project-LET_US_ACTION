@@ -28,9 +28,8 @@
       "description": "Getting information of consumed water for the selected month"
     }
   ],
-  "basePath": "/api",
   "paths": {
-    "api/users/signup": {
+    "/api/users/signup": {
       "post": {
         "tags": ["User"],
         "summary": "User registration",
@@ -62,7 +61,7 @@
         }
       }
     },
-    "api/users/signin": {
+    "/api/users/signin": {
       "post": {
         "tags": ["User"],
         "summary": "User login",
@@ -100,7 +99,7 @@
         }
       }
     },
-    "api/users/logout": {
+    "/api/users/logout": {
       "post": {
         "tags": ["User"],
         "summary": "User logout",
@@ -126,7 +125,7 @@
         }
       }
     },
-    "api/users/current": {
+    "/api/users/current": {
       "get": {
         "tags": ["User"],
         "summary": "Get information about the current user",
@@ -152,7 +151,7 @@
         }
       }
     },
-    "api/users/avatar": {
+    "/api/users/avatar": {
       "patch": {
         "tags": ["User"],
         "summary": "Upload or update user avatar",
@@ -195,7 +194,7 @@
         }
       }
     },
-    "api/users": {
+    "/api/users": {
       "patch": {
         "tags": ["User"],
         "summary": "Update user information",
@@ -238,7 +237,7 @@
         }
       }
     },
-    "api/water-rate": {
+    "/api/users/waterrate": {
       "patch": {
         "tags": ["WaterRate"],
         "summary": "Set daily water consumption rate for user",
@@ -280,7 +279,7 @@
         }
       }
     },
-    "api/water": {
+    "/api/water": {
       "post": {
         "tags": ["Water"],
         "summary": "Add water consumption record for signed in user",
@@ -323,7 +322,7 @@
         }
       }
     },
-    "api/water/{id}": {
+    "/api/water/{id}": {
       "patch": {
         "tags": ["Water"],
         "summary": "Update water consumption record for signed in user",
@@ -408,7 +407,7 @@
         }
       }
     },
-    "api/water/{today}": {
+    "/api/water/today": {
       "get": {
         "tags": ["Today"],
         "summary": "Get today's water consumption details",
@@ -422,16 +421,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "day",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            },
-            "required": true,
-            "description": "The specific date to retrieve water consumption details for"
           }
         ],
         "responses": {
@@ -447,7 +436,7 @@
         }
       }
     },
-    "api/water/{month}": {
+    "/api/water/{month}": {
       "get": {
         "tags": ["Month"],
         "summary": "Get water consumption details for selected month",
