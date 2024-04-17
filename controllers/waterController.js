@@ -2,7 +2,8 @@ import * as waterServices from "../services/waterServices.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import httpError from "../helpers/HttpError.js";
 
-import { minWaterCount, maxWaterCount, maxDailyWaterCount } from "../constants/water-constants.js";
+
+
 
 const addWater = async (req, res) => {
   const { waterVolume } = req.body;
@@ -10,8 +11,8 @@ const addWater = async (req, res) => {
   const date = new Date();
   let newWater = null;
 
-  if (waterVolume > maxWaterCount) {
-    throw httpError(400, `waterVolume cannot exceed ${maxWaterCount}`);
+  if (waterVolume > 5000) {
+    throw httpError(400, "waterVolume cannot exceed 5000");
   }
 
   const dailyNorma = await waterServices.getDailyNorma(owner);
@@ -36,13 +37,12 @@ const addWater = async (req, res) => {
 };
 
 const updateWater = async (req, res) => {
-  const { waterVolume } = req.body;
-  const { id } = req.params;
+  const {id,  waterVolume } = req.body;
   const { _id: owner } = req.user;
   const date = new Date();
 
-  if (waterVolume > maxWaterCount) {
-    throw httpError(400, `waterVolume cannot exceed ${maxWaterCount}`);
+  if (waterVolume > 5000) {
+    throw httpError(400, "waterVolume cannot exceed 5000");
   }
 
   const water = await waterServices.findWaterByDate({ owner, date });
@@ -51,14 +51,12 @@ const updateWater = async (req, res) => {
     throw httpError(404);
   }
 
-  const oldWaterVolume = water.waterNotes.find(
-    (waterNote) => waterNote._id.toString() === id
+  const oldWaterVolume = water.entries.find(
+    (entry) => entry._id.toString() === id
   ).waterVolume;
-  console.log(oldWaterVolume);  
 
   const updatedWater = await waterServices.updateCountWater({
     owner,
-    id: id,
     body: req.body,
     oldWaterVolume,
   });
@@ -67,17 +65,17 @@ const updateWater = async (req, res) => {
     throw httpError(404);
   }
 
-  const updatedNotes = updatedWater.waterNotes.find(
-    (waterNote) => waterNote._id.toString() === id
+  const updatedEntry = updatedWater.entries.find(
+    (entry) => entry._id.toString() === id
   );
 
-  res.json(updatedNotes);
+  res.json(updatedEntry);
 
 };
 
 const deleteWater = async (req, res) => {
   const { _id: owner } = req.user;
-  const { id } = req.params;
+  const { waterId } = req.params;
   const date = new Date();
 
   const water = await waterServices.findWaterByDate({owner, date});
@@ -85,21 +83,19 @@ const deleteWater = async (req, res) => {
   if (!water) {
     throw httpError(404);
   }
-    
-  console.log(water);
-  console.log(water.waterNotes);
 
-  const { waterVolume } = water.waterNotes.find((water) => water.id === id);
-
+  const { waterVolume } = water.entries.find((water) => water.id === waterId);
   
-  const deletedWater = await waterServices.deleteCountWater({ id, owner, waterVolume, date });
+  const deletedWater = await waterServices.deleteCountWater({ waterId, owner, waterVolume, date });
 
   if (!deletedWater) {
     throw httpError(404);
   }
 
-  res.json({ _id: id });
+  res.json({ _id: waterId });
 };
+
+
 
 export default {
   addWater: ctrlWrapper(addWater),
