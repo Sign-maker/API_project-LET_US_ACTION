@@ -1,8 +1,9 @@
 import express from "express";
-import validateBody from "../helpers/validateBody";
-import waterSchemas from "../schemas/waterSchemas";
-import { authenticate } from "../middlewares/authenticate";
-import { isValidId } from "../middlewares/isValidId";
+import validateBody from "../helpers/validateBody.js";
+import waterSchemas from "../schemas/waterSchemas.js";
+import { authenticate } from "../middlewares/authenticate.js";
+import { isValidId } from "../middlewares/isValidId.js";
+import waterController from "../controllers/waterControllers.js";
 
 const waterRouter = express.Router();
 
@@ -16,6 +17,7 @@ waterRouter.post(
 waterRouter.patch(
   "/water/:id",
   authenticate,
+  isValidId,
   validateBody(waterSchemas.updateWaterSchema),
   waterController.updateWater
 );
@@ -27,9 +29,9 @@ waterRouter.delete(
   waterController.deleteWater
 );
 
-waterRouter.get("/today", authenticate, waterController.getByDay);
+// waterRouter.get("/today", authenticate, waterController.getByDay);
 
-waterRouter.get("/month/", authenticate, waterController.getByMonth);
+// waterRouter.get("/month/", authenticate, waterController.getByMonth);
 
 export default waterRouter;
 
