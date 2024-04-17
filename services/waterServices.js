@@ -66,10 +66,10 @@ export const createWater = async ({ owner, dailyNorma, date }) => {
   return newData;
 };
 
-export const updateCountWater = async ({ owner, body, oldWaterVolume }) => {
+export const updateCountWater = async ({ owner, id, body, oldWaterVolume }) => {
 
   const updatedWater = await Water.findOneAndUpdate(
-    { "waterNotes._id": body.id, owner },
+    { "waterNotes._id": id, owner },
     {
       $set: {
         "waterNotes.$.waterVolume": body.waterVolume,

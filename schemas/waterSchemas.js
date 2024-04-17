@@ -24,9 +24,6 @@ const updateWaterSchema = Joi.object({
     .regex(dateRegexp)
     .required()
     .messages({ "any.required": "missing required date field" }),
-  id: Joi.string()
-    .required()
-    .messages({ "any.required": "missing required id field" }),
 });
 
 const waterSchemas = {

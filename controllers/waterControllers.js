@@ -36,7 +36,8 @@ const addWater = async (req, res) => {
 };
 
 const updateWater = async (req, res) => {
-  const {id,  waterVolume } = req.body;
+  const { waterVolume } = req.body;
+  const { id } = req.params;
   const { _id: owner } = req.user;
   const date = new Date();
 
@@ -53,9 +54,11 @@ const updateWater = async (req, res) => {
   const oldWaterVolume = water.waterNotes.find(
     (waterNote) => waterNote._id.toString() === id
   ).waterVolume;
+  console.log(oldWaterVolume);  
 
   const updatedWater = await waterServices.updateCountWater({
     owner,
+    id: id,
     body: req.body,
     oldWaterVolume,
   });

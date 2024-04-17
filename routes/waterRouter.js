@@ -8,14 +8,14 @@ import waterController from "../controllers/waterControllers.js";
 const waterRouter = express.Router();
 
 waterRouter.post(
-  "/water",
+  "/",
   authenticate,
   validateBody(waterSchemas.waterSchema),
   waterController.addWater
 );
 
 waterRouter.patch(
-  "/water/:id",
+  "/:id",
   authenticate,
   isValidId,
   validateBody(waterSchemas.updateWaterSchema),
@@ -23,7 +23,7 @@ waterRouter.patch(
 );
 
 waterRouter.delete(
-  "/water/:id",
+  "/:id",
   authenticate,
   isValidId,
   waterController.deleteWater
