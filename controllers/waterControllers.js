@@ -2,7 +2,7 @@ import * as waterServices from "../services/waterServices.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import httpError from "../helpers/HttpError.js";
 
-import { minWaterCount, maxWaterCount, maxDailyWaterCount } from "../constants/water-constants.js";
+import { waterLimits } from "../constants/water-constants.js";
 
 const addWater = async (req, res) => {
   const { waterVolume } = req.body;
@@ -10,8 +10,11 @@ const addWater = async (req, res) => {
   const date = new Date();
   let newWater = null;
 
-  if (waterVolume > maxWaterCount) {
-    throw httpError(400, `waterVolume cannot exceed ${maxWaterCount}`);
+  if (waterVolume > waterLimits.MAX_ONE_TIME_WATER_VALUE) {
+    throw httpError(
+      400,
+      `waterVolume cannot exceed ${waterLimits.MAX_ONE_TIME_WATER_VALUE}`
+    );
   }
 
   const dailyNorma = await waterServices.getDailyNorma(owner);
@@ -41,8 +44,11 @@ const updateWater = async (req, res) => {
   const { _id: owner } = req.user;
   const date = new Date();
 
-  if (waterVolume > maxWaterCount) {
-    throw httpError(400, `waterVolume cannot exceed ${maxWaterCount}`);
+  if (waterVolume > waterLimits.MAX_ONE_TIME_WATER_VALUE) {
+    throw httpError(
+      400,
+      `waterVolume cannot exceed ${waterLimits.MAX_ONE_TIME_WATER_VALUE}`
+    );
   }
 
   const water = await waterServices.findWaterByDate({ owner, date });
@@ -54,7 +60,7 @@ const updateWater = async (req, res) => {
   const oldWaterVolume = water.waterNotes.find(
     (waterNote) => waterNote._id.toString() === id
   ).waterVolume;
-  console.log(oldWaterVolume);  
+  console.log(oldWaterVolume);
 
   const updatedWater = await waterServices.updateCountWater({
     owner,
@@ -72,7 +78,6 @@ const updateWater = async (req, res) => {
   );
 
   res.json(updatedNotes);
-
 };
 
 const deleteWater = async (req, res) => {
@@ -80,19 +85,23 @@ const deleteWater = async (req, res) => {
   const { id } = req.params;
   const date = new Date();
 
-  const water = await waterServices.findWaterByDate({owner, date});
+  const water = await waterServices.findWaterByDate({ owner, date });
 
   if (!water) {
     throw httpError(404);
   }
-    
+
   console.log(water);
   console.log(water.waterNotes);
 
   const { waterVolume } = water.waterNotes.find((water) => water.id === id);
 
-  
-  const deletedWater = await waterServices.deleteCountWater({ id, owner, waterVolume, date });
+  const deletedWater = await waterServices.deleteCountWater({
+    id,
+    owner,
+    waterVolume,
+    date,
+  });
 
   if (!deletedWater) {
     throw httpError(404);

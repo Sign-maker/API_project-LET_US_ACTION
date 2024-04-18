@@ -25,11 +25,10 @@ const signup = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
-  const avatarURL = gravatar.url(req.body.email, { s: 250, d: "mp" });
+  // const avatarURL = gravatar.url(req.body.email, { s: 250, d: "mp" });
 
   const newUser = await authServices.signup({
     ...req.body,
-    avatarURL,
   });
 
   const token = makeToken(newUser._id);
@@ -148,7 +147,7 @@ const updateWaterRate = async (req, res) => {
   const { _id } = req.user;
   const { waterRate, dailyNorma } = req.body;
 
-  if (waterRate > 15) {
+  if (waterRate > 15000) {
     throw HttpError(400, "The daily rate can be a maximum of 15 l");
   }
 
