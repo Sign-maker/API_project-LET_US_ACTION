@@ -15,9 +15,10 @@ const userSignInSchema = Joi.object({
 const userUpdateSchema = Joi.object({
   name: Joi.string().max(32),
   email: Joi.string().pattern(emailRegexp),
-  oldPassword: Joi.string().min(8).max(64),
-  password: Joi.string().min(8).max(64),
   gender: Joi.string().valid(...genderList),
+  password: Joi.string().min(8).max(64),
+  newPassword: Joi.string().min(8).max(64),
+  dailyNorma: Joi.number().min(0).max(15),
 });
 
 const waterRateSchema = Joi.object({
