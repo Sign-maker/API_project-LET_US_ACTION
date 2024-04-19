@@ -7,6 +7,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "./swagger.json" assert { type: "json" };
 
 import userRouter from "./routes/authRouter.js";
+import waterRouter from "./routes/waterRouter.js";
 
 const app = express();
 const { PORT, DB_HOST } = process.env;
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(express.static("public"));
 
 app.use("/api/users", userRouter);
+app.use("/api/water", waterRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

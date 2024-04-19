@@ -30,6 +30,7 @@ userRouter.patch(
   authController.updateUser
 );
 
+
 userRouter.patch(
   "/avatars",
   authenticate,
@@ -42,6 +43,13 @@ userRouter.patch(
   authenticate,
   validateBody(userSchemas.waterRateSchema),
   authController.updateWaterRate
+);
+
+userRouter.patch(
+  "/profile",
+  authenticate,
+  validateBody(userSchemas.userUpdateSchema),
+  authController.updateProfile
 );
 
 export default userRouter;

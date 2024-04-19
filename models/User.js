@@ -23,10 +23,13 @@ const userSchema = new Schema(
       enum: genderList,
       default: genderList[0],
     },
-    avatarURL: { type: String },
+    avatarURL: {
+      type: String,
+      default: "",
+    },
     dailyNorma: {
       type: Number,
-      default: 2,
+      default: 2000,
     },
     token: {
       type: String,
