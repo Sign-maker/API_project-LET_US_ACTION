@@ -146,24 +146,25 @@ const updateAvatar = async (req, res) => {
 
 const updateWaterRate = async (req, res) => {
   const { _id } = req.user;
-  const { waterRate, dailyNorma } = req.body;
+  const { dailyNorma } = req.body;
 
-  if (waterRate > 15000) {
+
+  if (dailyNorma > 15000) {
+
     throw HttpError(400, "The daily rate can be a maximum of 15 l");
   }
 
-  const updatedUser = await updateUser(_id, { dailyNorma }, { new: true });
+  const updatedUser = await authServices.updateUser(
+    _id,
+    { dailyNorma: dailyNorma },
+    { new: true }
+  );
 
   if (!updatedUser) {
     throw HttpError(404, "User not found");
   }
 
-  const norma = await updateDailyNorma({ owner: _id, dailyNorma });
-  if (!norma) {
-    throw HttpError(404);
-  }
-
-  res.json({ waterRate });
+  res.json({ dailyNorma: updatedUser.dailyNorma });
 };
 
 const updateProfile = async (req, res) => {

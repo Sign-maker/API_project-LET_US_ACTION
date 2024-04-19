@@ -261,7 +261,7 @@
                 "$ref": "#/components/schemas/WaterRateSchema"
               },
               "example": {
-                "waterRate": "1500"
+                "dailyNorma": "1500"
               }
             }
           }
