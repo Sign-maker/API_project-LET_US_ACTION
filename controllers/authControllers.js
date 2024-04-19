@@ -180,7 +180,7 @@ const updateProfile = async (req, res) => {
 
   const existedUser = await authServices.findUser({ email });
   if (existedUser && existedUser._id.toString() !== _id) {
-    throw HttpError(400, "Email already exists");
+    throw HttpError(400, "User with this email already exists");
     return;
   }
 
@@ -198,7 +198,7 @@ const updateProfile = async (req, res) => {
       user.password
     );
     if (!isValidPassword) {
-      throw HttpError(401, "Password is wrong");
+      throw HttpError(401, "Your password is wrong");
     }
     updatedUser = await authServices.updateUser(_id, {
       name,
