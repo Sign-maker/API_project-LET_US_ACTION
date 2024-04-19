@@ -101,8 +101,29 @@ const deleteWater = async (req, res) => {
   res.json({ _id: id });
 };
 
+const getByDay = async (req, res) => {
+  const { _id: owner } = req.user;
+
+  const dailyWater = await waterServices.getNotesDaily({owner});
+
+  if (!dailyWater) {
+    res.json([])
+  }
+
+  res.json({
+    amountOfWater: dailyWater.waterNotes.length,
+    percentage: Math.floor(
+      (dailyWater.totalVolume / dailyWater.dailyNorma ) * 100
+    ),
+    waterNotes: dailyWater.waterNotes,
+    totalVolume: dailyWater.totalVolume,
+    dailyNorma: dailyWater.dailyNorma
+  });
+};
+
 export default {
   addWater: ctrlWrapper(addWater),
   updateWater: ctrlWrapper(updateWater),
   deleteWater: ctrlWrapper(deleteWater),
+  getByDay: ctrlWrapper(getByDay),
 };
