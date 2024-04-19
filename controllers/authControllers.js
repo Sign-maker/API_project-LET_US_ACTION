@@ -3,8 +3,9 @@ import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
 import * as authServices from "../services/authServices.js";
 import path from "path";
-import gravatar from "gravatar";
+import bcrypt from "bcrypt";
 import fs from "fs/promises";
+
 import Jimp from "jimp";
 import { AVATAR_IMG_SIZES } from "../constants/user-constants.js";
 import { updateDailyNorma } from "../services/waterServices.js";
@@ -25,11 +26,10 @@ const signup = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
-  const avatarURL = gravatar.url(req.body.email, { s: 250, d: "mp" });
+  // const avatarURL = gravatar.url(req.body.email, { s: 250, d: "mp" });
 
   const newUser = await authServices.signup({
     ...req.body,
-    avatarURL,
   });
 
   const token = makeToken(newUser._id);
@@ -148,7 +148,7 @@ const updateWaterRate = async (req, res) => {
   const { _id } = req.user;
   const { waterRate, dailyNorma } = req.body;
 
-  if (waterRate > 15) {
+  if (waterRate > 15000) {
     throw HttpError(400, "The daily rate can be a maximum of 15 l");
   }
 
@@ -166,6 +166,58 @@ const updateWaterRate = async (req, res) => {
   res.json({ waterRate });
 };
 
+const updateProfile = async (req, res) => {
+  console.log(req.body);
+  const { _id } = req.user;
+  const { name, email, gender, password, newPassword } = req.body;
+
+  let updatedUser;
+
+  const user = await authServices.findUser({ _id });
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+
+  const existedUser = await authServices.findUser({ email });
+  if (existedUser && existedUser._id.toString() !== _id) {
+    throw HttpError(400, "User with this email already exists");
+    return;
+  }
+
+  if (!password && !newPassword) {
+    updatedUser = await authServices.updateUser(_id, {
+      name,
+      email,
+      gender,
+    });
+  }
+
+  if (password && newPassword) {
+    const isValidPassword = await authServices.validatePassword(
+      password,
+      user.password
+    );
+    if (!isValidPassword) {
+      throw HttpError(401, "Your password is wrong");
+    }
+    updatedUser = await authServices.updateUser(_id, {
+      name,
+      email,
+      gender,
+      password: await bcrypt.hash(newPassword, 10),
+    });
+  }
+
+  console.log(updatedUser);
+  res.json({
+    user: {
+      name: updatedUser.name,
+      email: updatedUser.email,
+      gender: updatedUser.gender,
+    },
+  });
+};
+
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
@@ -174,4 +226,5 @@ export default {
   updateUser: ctrlWrapper(updateUser),
   updateAvatar: ctrlWrapper(updateAvatar),
   updateWaterRate: ctrlWrapper(updateWaterRate),
+  updateProfile: ctrlWrapper(updateProfile),
 };
