@@ -73,7 +73,6 @@ export const updateCountWater = async ({ owner, id, body, oldWaterVolume }) => {
     {
       $set: {
         "waterNotes.$.waterVolume": body.waterVolume,
-        "waterNotes.$.time": body.time,
       },
       $inc: { totalVolume: body.waterVolume - oldWaterVolume },
     },
@@ -84,7 +83,7 @@ export const updateCountWater = async ({ owner, id, body, oldWaterVolume }) => {
 };
 
 export const deleteCountWater = async ({ id, owner, waterVolume, date }) => {
-
+  
   const deletedCount = await Water.findOneAndUpdate(
     {
       date: {
@@ -100,4 +99,26 @@ export const deleteCountWater = async ({ id, owner, waterVolume, date }) => {
   );
 
   return deletedCount;
+};
+
+export const getNotesDaily = async ({ owner }) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Устанавливаем время на начало дня
+  console.log("today: ", today);
+
+  const dateUTC = today.toUTCString();
+  console.log("dateUTC: ", dateUTC);
+  const date = new Date(dateUTC);
+  console.log("date: ", date.getMonth());
+  
+  const waterData = await Water.findOne({
+    date: {
+      $gte: dateUTC,  // выполняем сортировку по дате, если дата >= today и по владельцу
+    },
+    owner,
+  });
+  
+  console.log(waterData.date);
+
+  return waterData;
 };

@@ -29,7 +29,7 @@ waterRouter.delete(
   waterController.deleteWater
 );
 
-// waterRouter.get("/today", authenticate, waterController.getByDay);
+waterRouter.get("/today", authenticate, waterController.getByDay);
 
 // waterRouter.get("/month/", authenticate, waterController.getByMonth);
 

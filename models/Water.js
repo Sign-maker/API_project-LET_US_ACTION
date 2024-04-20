@@ -9,7 +9,6 @@ const notesSchema = new Schema({
   },
   date: {
     type: String,
-    match: dateRegexp,
     required: [true, "Time is required"],
   },
 });
@@ -18,7 +17,6 @@ const waterSchema = new Schema(
   {
     date: {
       type: Date,
-      match: dateRegexp,
       required: [true, "date is required"],
     },
     dailyNorma: {
