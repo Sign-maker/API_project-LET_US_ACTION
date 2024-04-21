@@ -1,0 +1,5 @@
+export const calcFulfillment = (totalVolume, dailyNorma) => {
+  const fulfillment = Math.floor((totalVolume / dailyNorma) * 100);
+
+  return fulfillment >= 100 ? 100 : fulfillment;
+};

@@ -1,27 +1,27 @@
 import Joi from "joi";
 import { dateRegexp } from "../constants/user-constants.js";
-import { minWaterCount, maxWaterCount } from "../constants/water-constants.js";
+import { waterLimits } from "../constants/water-constants.js";
 
 const waterSchema = Joi.object({
   waterVolume: Joi.number()
-    .min(minWaterCount)
-    .max(maxWaterCount)
+    .min(waterLimits.MIN_ONE_TIME_WATER_VALUE)
+    .max(waterLimits.MAX_ONE_TIME_WATER_VALUE)
     .required()
     .messages({ "any.required": "missing required waterVolume field" }),
-  date: Joi.string()
-    .regex(dateRegexp)
+  date: Joi.date()
+    // .regex(dateRegexp)
     .required()
     .messages({ "any.required": "missing required date field" }),
 });
 
 const updateWaterSchema = Joi.object({
   waterVolume: Joi.number()
-    .min(minWaterCount)
-    .max(maxWaterCount)
+    .min(waterLimits.MIN_ONE_TIME_WATER_VALUE)
+    .max(waterLimits.MAX_ONE_TIME_WATER_VALUE)
     .required()
     .messages({ "any.required": "missing required waterVolume field" }),
-  date: Joi.string()
-    .regex(dateRegexp)
+  date: Joi.date()
+    // .regex(dateRegexp)
     .required()
     .messages({ "any.required": "missing required date field" }),
 });

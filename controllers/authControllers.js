@@ -148,9 +148,7 @@ const updateWaterRate = async (req, res) => {
   const { _id } = req.user;
   const { dailyNorma } = req.body;
 
-
   if (dailyNorma > 15000) {
-
     throw HttpError(400, "The daily rate can be a maximum of 15 l");
   }
 
@@ -163,6 +161,7 @@ const updateWaterRate = async (req, res) => {
   if (!updatedUser) {
     throw HttpError(404, "User not found");
   }
+  await updateDailyNorma({ owner: _id, dailyNorma });
 
   res.json({ dailyNorma: updatedUser.dailyNorma });
 };

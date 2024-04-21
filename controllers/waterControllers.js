@@ -3,6 +3,7 @@ import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import httpError from "../helpers/HttpError.js";
 
 import { waterLimits } from "../constants/water-constants.js";
+import { calcFulfillment } from "../helpers/calcFulfillment";
 
 const addWater = async (req, res) => {
   const { waterVolume } = req.body;
@@ -35,7 +36,7 @@ const addWater = async (req, res) => {
     throw httpError(404);
   }
 
-  res.status(200).json(amountWater);
+  res.json(amountWater);
 };
 
 const updateWater = async (req, res) => {
@@ -113,21 +114,22 @@ const deleteWater = async (req, res) => {
 const getByDay = async (req, res) => {
   const { _id: owner } = req.user;
 
-  const dailyWater = await waterServices.getNotesDaily({owner});
+  const dailyWater = await waterServices.getNotesDaily({ owner });
 
-  if (!dailyWater) {
-    res.json([])
-  }
+  const dayResult = !dailyWater
+    ? {}
+    : {
+        servingsCount: dailyWater.waterNotes.length,
+        fulfillment: calcFulfillment(
+          dailyWater.totalVolume,
+          dailyWater.dailyNorma
+        ),
+        dayNotes: dailyWater.waterNotes,
+        totalVolume: dailyWater.totalVolume,
+        dailyNorma: dailyWater.dailyNorma,
+      };
 
-  res.json({
-    amountOfWater: dailyWater.waterNotes.length,
-    percentage: Math.floor(
-      (dailyWater.totalVolume / dailyWater.dailyNorma ) * 100
-    ),
-    waterNotes: dailyWater.waterNotes,
-    totalVolume: dailyWater.totalVolume,
-    dailyNorma: dailyWater.dailyNorma
-  });
+  res.json(dayResult);
 };
 
 export default {
