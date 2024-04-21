@@ -2,7 +2,6 @@ import * as waterServices from "../services/waterServices.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import httpError from "../helpers/HttpError.js";
 
-
 import { waterLimits } from "../constants/water-constants.js";
 import { calcFulfillment } from "../helpers/calcFulfillment";
 
@@ -45,6 +44,7 @@ const updateWater = async (req, res) => {
   const { id } = req.params;
   const { _id: owner } = req.user;
   const date = new Date();
+  date.setHours(0, 0, 0, 0);
 
   if (waterVolume > waterLimits.MAX_ONE_TIME_WATER_VALUE) {
     throw httpError(
@@ -59,10 +59,13 @@ const updateWater = async (req, res) => {
     throw httpError(404);
   }
 
-  const oldWaterVolume = water.waterNotes.find(
+  const oldWater = water.waterNotes.find(
     (waterNote) => waterNote._id.toString() === id
-  ).waterVolume;
-  console.log(oldWaterVolume);
+  );
+  if (!oldWater) {
+    throw httpError(404);
+  }
+  const oldWaterVolume = oldWater.waterVolume;
 
   const updatedWater = await waterServices.updateCountWater({
     owner,
@@ -118,7 +121,7 @@ const getByDay = async (req, res) => {
   const dailyWater = await waterServices.getNotesDaily({ owner });
 
   const dayResult = !dailyWater
-    ? {}
+    ? { dailyNorma: req.user.dailyNorma }
     : {
         servingsCount: dailyWater.waterNotes.length,
         fulfillment: calcFulfillment(
@@ -140,25 +143,31 @@ const getByMonth = async (req, res) => {
   // const startDate = new Date(year, month - 1, 1);
   // const endDate = new Date(year, month, 0);
 
-  const startDate = new Date(Date.UTC(year, month - 1, 1));
-  const endDate = new Date(Date.UTC(year, month, 0));
+  //   const startDate = new Date(Date.UTC(year, month - 1, 1));
+  //   const endDate = new Date(Date.UTC(year, month, 0));
+  const startDate = new Date(year, month - 1, 1);
+  const endDate = new Date(year, month, 0);
+  endDate.setHours(23, 59, 59, 999);
+  console.log(startDate, endDate);
 
-  const waterOfMonth = await waterServices.getEntriesMonthly({ owner, startDate, endDate });
-  console.log(waterOfMonth);
-
-  const waterOfMonthWithCalculation = waterOfMonth.map(item => {
-    const itemObject = item.toObject(); // Преобразование в обычный объект
-    return {
-      ...itemObject,
-      fulfillment: calcFulfillment(
-          itemObject.totalVolume,
-          itemObject.dailyNorma
-      ),
-      servingsCount: itemObject.waterNotes.length
-    };
+  const waterOfMonth = await waterServices.getEntriesMonthly({
+    owner,
+    startDate,
+    endDate,
   });
 
-  
+  const waterOfMonthWithCalculation = waterOfMonth.map(
+    ({ totalVolume, waterNotes, dailyNorma, date }) => {
+      return {
+        date,
+        dailyNorma,
+        totalVolume,
+        fulfillment: calcFulfillment(totalVolume, dailyNorma),
+        servingsCount: waterNotes.length,
+      };
+    }
+  );
+
   // if (!waterOfMonth.length) {
   //   throw httpError(404);
   // }
@@ -180,16 +189,16 @@ const getByMonth = async (req, res) => {
   //       percentage: dailyPercentage
   //     });
   //   }
-    // else {
-    //   // Если для текущего дня нет данных, добавляем пустую запись
-    //   monthlyData.push({
-    //     id: null,
-    //     date: currentDate,
-    //     amountOfWater: 0,
-    //     dailyNorma: null,
-    //     percentage: null
-    //   });
-    // }
+  // else {
+  //   // Если для текущего дня нет данных, добавляем пустую запись
+  //   monthlyData.push({
+  //     id: null,
+  //     date: currentDate,
+  //     amountOfWater: 0,
+  //     dailyNorma: null,
+  //     percentage: null
+  //   });
+  // }
   // }
   // if (!monthlyData.length) {
   //   throw httpError(404);
@@ -198,11 +207,10 @@ const getByMonth = async (req, res) => {
   res.json({ month: waterOfMonthWithCalculation });
 };
 
-
 export default {
   addWater: ctrlWrapper(addWater),
   updateWater: ctrlWrapper(updateWater),
   deleteWater: ctrlWrapper(deleteWater),
   getByDay: ctrlWrapper(getByDay),
-  getByMonth: ctrlWrapper(getByMonth)
+  getByMonth: ctrlWrapper(getByMonth),
 };
