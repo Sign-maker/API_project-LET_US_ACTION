@@ -120,7 +120,7 @@ const getByDay = async (req, res) => {
   const dayResult = !dailyWater
     ? {}
     : {
-        servingsCount: dailyWater.waterNotes.length-1,
+        servingsCount: dailyWater.waterNotes.length,
         fulfillment: calcFulfillment(
           dailyWater.totalVolume,
           dailyWater.dailyNorma
@@ -146,16 +146,19 @@ const getByMonth = async (req, res) => {
   const waterOfMonth = await waterServices.getEntriesMonthly({ owner, startDate, endDate });
   console.log(waterOfMonth);
 
-  waterOfMonth.map(item => {
+  const waterOfMonthWithCalculation = waterOfMonth.map(item => {
+    const itemObject = item.toObject(); // Преобразование в обычный объект
     return {
-      ...item,
+      ...itemObject,
       fulfillment: calcFulfillment(
-          item.totalVolume,
-          item.dailyNorma
+          itemObject.totalVolume,
+          itemObject.dailyNorma
       ),
-      servingsCount: item.waterNotes.length-1
-    }
-  })
+      servingsCount: itemObject.waterNotes.length
+    };
+  });
+
+  
   // if (!waterOfMonth.length) {
   //   throw httpError(404);
   // }
@@ -192,7 +195,7 @@ const getByMonth = async (req, res) => {
   //   throw httpError(404);
   // }
 
-  res.json({ month: waterOfMonth });
+  res.json({ month: waterOfMonthWithCalculation });
 };
 
 
