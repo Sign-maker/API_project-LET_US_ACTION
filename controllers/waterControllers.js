@@ -120,7 +120,7 @@ const getByDay = async (req, res) => {
   const dayResult = !dailyWater
     ? {}
     : {
-        servingsCount: dailyWater.waterNotes.length,
+        servingsCount: dailyWater.waterNotes.length-1,
         fulfillment: calcFulfillment(
           dailyWater.totalVolume,
           dailyWater.dailyNorma
@@ -145,27 +145,38 @@ const getByMonth = async (req, res) => {
 
   const waterOfMonth = await waterServices.getEntriesMonthly({ owner, startDate, endDate });
   console.log(waterOfMonth);
+
+  waterOfMonth.map(item => {
+    return {
+      ...item,
+      fulfillment: calcFulfillment(
+          item.totalVolume,
+          item.dailyNorma
+      ),
+      servingsCount: item.waterNotes.length-1
+    }
+  })
   // if (!waterOfMonth.length) {
   //   throw httpError(404);
   // }
   // .setHours(0, 0, 0,0)
 
-  const monthlyData = [];
+  // const monthlyData = [];
 
-  for (let day = 1; day <= endDate.getDate(); day++) {
-    const currentDate = new Date(Date.UTC(year, month - 1, day));
-    const waterDay = waterOfMonth.find(entry => entry.date.getDate() === day);
-    // Если для текущего дня есть данные о потреблении воды
-    if (waterDay) {
-      const dailyPercentage = Math.floor((waterDay.totalVolume / waterDay.dailyNorma) * 100);
-      monthlyData.push({
-        id: waterDay._id,
-        date: currentDate,
-        amountOfWater: waterDay.waterNotes.length,
-        dailyNorma: waterDay.dailyNorma,
-        percentage: dailyPercentage
-      });
-    }
+  // for (let day = 1; day <= endDate.getDate(); day++) {
+  //   const currentDate = new Date(Date.UTC(year, month - 1, day));
+  //   const waterDay = waterOfMonth.find(entry => entry.date.getDate() === day);
+  //   // Если для текущего дня есть данные о потреблении воды
+  //   if (waterDay) {
+  //     const dailyPercentage = Math.floor((waterDay.totalVolume / waterDay.dailyNorma) * 100);
+  //     monthlyData.push({
+  //       id: waterDay._id,
+  //       date: currentDate,
+  //       amountOfWater: waterDay.waterNotes.length,
+  //       dailyNorma: waterDay.dailyNorma,
+  //       percentage: dailyPercentage
+  //     });
+  //   }
     // else {
     //   // Если для текущего дня нет данных, добавляем пустую запись
     //   monthlyData.push({
@@ -176,12 +187,12 @@ const getByMonth = async (req, res) => {
     //     percentage: null
     //   });
     // }
-  }
-  if (!monthlyData.length) {
-    throw httpError(404);
-  }
+  // }
+  // if (!monthlyData.length) {
+  //   throw httpError(404);
+  // }
 
-  res.json({ month: monthlyData });
+  res.json({ month: waterOfMonth });
 };
 
 
