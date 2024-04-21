@@ -3,16 +3,12 @@ import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
 import cloudinary from "../helpers/cloudinary.js";
 import * as authServices from "../services/authServices.js";
-import path from "path";
 import bcrypt from "bcrypt";
 import fs from "fs/promises";
 
-import Jimp from "jimp";
-import { AVATAR_IMG_SIZES } from "../constants/user-constants.js";
 import { updateDailyNorma } from "../services/waterServices.js";
 
 const { JWT_SECRET } = process.env;
-const avatarsPath = path.resolve("public", "avatars");
 
 const makeToken = (id) => {
   const payload = { id };
@@ -143,9 +139,7 @@ const updateWaterRate = async (req, res) => {
   const { _id } = req.user;
   const { dailyNorma } = req.body;
 
-
   if (dailyNorma > 15000) {
-
     throw HttpError(400, "The daily rate can be a maximum of 15 l");
   }
 
