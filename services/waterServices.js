@@ -113,3 +113,13 @@ export const getNotesDaily = async ({ owner }) => {
 
   return waterData;
 };
+
+export const getEntriesMonthly = async ({ owner, startDate, endDate }) => {
+
+  const waterOfMonth = await Water.find({
+    date: { $gte: startDate, $lte: endDate },
+    owner,
+  });
+
+  return waterOfMonth;
+};
