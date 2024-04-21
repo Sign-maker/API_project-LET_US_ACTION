@@ -23,19 +23,13 @@ userRouter.get("/current", authenticate, authController.getCurrent);
 
 userRouter.post("/logout", authenticate, authController.signout);
 
-userRouter.post(
-  "/waterrate",
+userRouter.patch(
+  "/",
   authenticate,
-  validateBody(userSchemas.waterRateSchema),
+  validateBody(userSchemas.userUpdateSchema),
   authController.updateUser
 );
 
-// userRouter.patch(
-//   "/",
-//   authenticate,
-//   validateBody(userSchemas.userUpdateSchema),
-//   authController.updateUser
-// );
 
 userRouter.patch(
   "/avatars",
