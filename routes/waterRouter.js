@@ -31,7 +31,7 @@ waterRouter.delete(
 
 waterRouter.get("/today", authenticate, waterController.getByDay);
 
-// waterRouter.get("/month/", authenticate, waterController.getByMonth);
+waterRouter.get("/month/:date", authenticate, waterController.getByMonth);
 
 export default waterRouter;
 
