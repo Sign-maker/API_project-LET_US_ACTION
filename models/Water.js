@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { handleSaveError, setUpdateSettings } from "./hooks.js";
-import { dateRegexp } from "../constants/user-constants.js";
+// import { dateRegexp } from "../constants/user-constants.js";
 
 const notesSchema = new Schema({
   waterVolume: {
@@ -8,7 +8,7 @@ const notesSchema = new Schema({
     required: [true, "Add volume of water"],
   },
   date: {
-    type: String,
+    type: Date,
     required: [true, "Time is required"],
   },
 });

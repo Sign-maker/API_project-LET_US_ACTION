@@ -33,9 +33,11 @@ export const getDailyNorma = async (owner) => {
 };
 
 export const findWaterByDate = async ({ owner, date }) => {
+  date.setHours(0, 0, 0, 0);
+
   const water = await Water.findOne({
     date: {
-      $gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+      $gte: date,
     },
     owner,
   });
@@ -57,7 +59,7 @@ export const addCountWater = async ({ body, owner, waterId }) => {
 
 export const createWater = async ({ owner, dailyNorma, date }) => {
   const newData = await Water.create({
-    date,
+    date: date.setHours(0, 0, 0, 0),
     dailyNorma,
     waterNotes: [],
     totalVolume: 0,
@@ -67,12 +69,12 @@ export const createWater = async ({ owner, dailyNorma, date }) => {
 };
 
 export const updateCountWater = async ({ owner, id, body, oldWaterVolume }) => {
-
   const updatedWater = await Water.findOneAndUpdate(
     { "waterNotes._id": id, owner },
     {
       $set: {
         "waterNotes.$.waterVolume": body.waterVolume,
+        "waterNotes.$.date": body.date,
       },
       $inc: { totalVolume: body.waterVolume - oldWaterVolume },
     },
@@ -83,7 +85,6 @@ export const updateCountWater = async ({ owner, id, body, oldWaterVolume }) => {
 };
 
 export const deleteCountWater = async ({ id, owner, waterVolume, date }) => {
-  
   const deletedCount = await Water.findOneAndUpdate(
     {
       date: {
@@ -103,22 +104,22 @@ export const deleteCountWater = async ({ id, owner, waterVolume, date }) => {
 
 export const getNotesDaily = async ({ owner }) => {
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Устанавливаем время на начало дня
-  console.log("today: ", today);
-
-  const dateUTC = today.toUTCString();
-  console.log("dateUTC: ", dateUTC);
-  const date = new Date(dateUTC);
-  console.log("date: ", date.getMonth());
-  
+  today.setHours(0, 0, 0, 0);
   const waterData = await Water.findOne({
     date: {
-      $gte: dateUTC,  // выполняем сортировку по дате, если дата >= today и по владельцу
+      $gte: today,
     },
     owner,
   });
-  
-  console.log(waterData.date);
 
   return waterData;
+};
+
+export const getEntriesMonthly = async ({ owner, startDate, endDate }) => {
+  const waterOfMonth = await Water.find({
+    date: { $gte: startDate, $lte: endDate },
+    owner,
+  });
+
+  return waterOfMonth;
 };

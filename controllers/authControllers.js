@@ -152,6 +152,7 @@ const updateWaterRate = async (req, res) => {
   if (!updatedUser) {
     throw HttpError(404, "User not found");
   }
+  await updateDailyNorma({ owner: _id, dailyNorma });
 
   res.json({ dailyNorma: updatedUser.dailyNorma });
 };
