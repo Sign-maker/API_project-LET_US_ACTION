@@ -1,5 +1,4 @@
 import Joi from "joi";
-import { dateRegexp } from "../constants/user-constants.js";
 import { waterLimits } from "../constants/water-constants.js";
 
 const waterSchema = Joi.object({
@@ -9,7 +8,6 @@ const waterSchema = Joi.object({
     .required()
     .messages({ "any.required": "missing required waterVolume field" }),
   date: Joi.date()
-    // .regex(dateRegexp)
     .required()
     .messages({ "any.required": "missing required date field" }),
 });
@@ -21,7 +19,6 @@ const updateWaterSchema = Joi.object({
     .required()
     .messages({ "any.required": "missing required waterVolume field" }),
   date: Joi.date()
-    // .regex(dateRegexp)
     .required()
     .messages({ "any.required": "missing required date field" }),
 });

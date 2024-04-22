@@ -26,8 +26,6 @@ const signup = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
-  // const avatarURL = gravatar.url(req.body.email, { s: 250, d: "mp" });
-
   const newUser = await authServices.signup({
     ...req.body,
   });
@@ -106,7 +104,6 @@ const getCurrent = (req, res) => {
 
 const updateUser = async (req, res) => {
   const { _id } = req.user;
-  //добавить проверку старого пароля при замене на новый и записи нового пароля в бд (с хеширование)
   const updatedUser = await authServices.updateUser(_id, req.body);
 
   res.json({
