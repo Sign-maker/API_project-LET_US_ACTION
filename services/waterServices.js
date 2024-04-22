@@ -74,6 +74,7 @@ export const updateCountWater = async ({ owner, id, body, oldWaterVolume }) => {
     {
       $set: {
         "waterNotes.$.waterVolume": body.waterVolume,
+        "waterNotes.$.date": body.date,
       },
       $inc: { totalVolume: body.waterVolume - oldWaterVolume },
     },
@@ -115,7 +116,6 @@ export const getNotesDaily = async ({ owner }) => {
 };
 
 export const getEntriesMonthly = async ({ owner, startDate, endDate }) => {
-
   const waterOfMonth = await Water.find({
     date: { $gte: startDate, $lte: endDate },
     owner,
