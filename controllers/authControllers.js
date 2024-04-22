@@ -1,17 +1,14 @@
 import jwt from "jsonwebtoken";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
+import cloudinary from "../helpers/cloudinary.js";
 import * as authServices from "../services/authServices.js";
-import path from "path";
 import bcrypt from "bcrypt";
 import fs from "fs/promises";
 
-import Jimp from "jimp";
-import { AVATAR_IMG_SIZES } from "../constants/user-constants.js";
 import { updateDailyNorma } from "../services/waterServices.js";
 
 const { JWT_SECRET } = process.env;
-const avatarsPath = path.resolve("public", "avatars");
 
 const makeToken = (id) => {
   const payload = { id };
@@ -121,24 +118,18 @@ const updateUser = async (req, res) => {
 };
 
 const updateAvatar = async (req, res) => {
-  const { _id, email } = req.user;
+  const { _id } = req.user;
 
   if (!req.file) {
     throw HttpError(400, "No attached file");
   }
+  const { path } = req.file;
 
-  const { path: oldPath, filename } = req.file;
-  const { height, width } = AVATAR_IMG_SIZES.small;
-  const newFileName = `${email}-${width}x${height}-${filename}`;
-  const newPath = path.join(avatarsPath, newFileName);
+  const { url: avatarURL } = await cloudinary.uploader.upload(req.file.path, {
+    folder: "avatars",
+  });
+  await fs.unlink(path);
 
-  const avatarImg = await Jimp.read(oldPath);
-
-  await avatarImg.resize(width, height).write(newPath);
-
-  await fs.unlink(oldPath);
-
-  const avatarURL = path.join("avatars", newFileName);
   await authServices.updateUser({ _id }, { avatarURL });
 
   res.json({ avatarURL });
