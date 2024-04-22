@@ -1,6 +1,5 @@
 import { Schema, model } from "mongoose";
 import { handleSaveError, setUpdateSettings } from "./hooks.js";
-// import { dateRegexp } from "../constants/user-constants.js";
 
 const notesSchema = new Schema({
   waterVolume: {

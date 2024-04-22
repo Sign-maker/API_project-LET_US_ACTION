@@ -23,8 +23,6 @@ const signup = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
-  // const avatarURL = gravatar.url(req.body.email, { s: 250, d: "mp" });
-
   const newUser = await authServices.signup({
     ...req.body,
   });
@@ -103,7 +101,6 @@ const getCurrent = (req, res) => {
 
 const updateUser = async (req, res) => {
   const { _id } = req.user;
-  //добавить проверку старого пароля при замене на новый и записи нового пароля в бд (с хеширование)
   const updatedUser = await authServices.updateUser(_id, req.body);
 
   res.json({
@@ -158,7 +155,6 @@ const updateWaterRate = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-  console.log(req.body);
   const { _id } = req.user;
   const { name, email, gender, password, newPassword } = req.body;
 
@@ -198,8 +194,7 @@ const updateProfile = async (req, res) => {
       password: await bcrypt.hash(newPassword, 10),
     });
   }
-
-  console.log(updatedUser);
+  
   res.json({
     user: {
       name: updatedUser.name,
