@@ -155,7 +155,6 @@ const updateWaterRate = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-  console.log(req.body);
   const { _id } = req.user;
   const { name, email, gender, password, newPassword } = req.body;
 
@@ -195,8 +194,7 @@ const updateProfile = async (req, res) => {
       password: await bcrypt.hash(newPassword, 10),
     });
   }
-
-  console.log(updatedUser);
+  
   res.json({
     user: {
       name: updatedUser.name,

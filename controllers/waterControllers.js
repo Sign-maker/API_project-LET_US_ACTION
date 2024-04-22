@@ -96,9 +96,6 @@ const deleteWater = async (req, res) => {
     throw httpError(404);
   }
 
-  console.log(water);
-  console.log(water.waterNotes);
-
   const { waterVolume } = water.waterNotes.find((water) => water.id === id);
 
   const deletedWater = await waterServices.deleteCountWater({
@@ -144,7 +141,6 @@ const getByMonth = async (req, res) => {
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 0);
   endDate.setHours(23, 59, 59, 999);
-  console.log(startDate, endDate);
 
   const waterOfMonth = await waterServices.getEntriesMonthly({
     owner,
