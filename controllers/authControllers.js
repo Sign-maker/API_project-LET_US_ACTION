@@ -101,22 +101,6 @@ const getCurrent = (req, res) => {
   });
 };
 
-const updateUser = async (req, res) => {
-  const { _id } = req.user;
-  //добавить проверку старого пароля при замене на новый и записи нового пароля в бд (с хеширование)
-  const updatedUser = await authServices.updateUser(_id, req.body);
-
-  res.json({
-    user: {
-      name: updatedUser.name,
-      email: updatedUser.email,
-      gender: updatedUser.gender,
-      avatarURL: updatedUser.avatarURL,
-      dailyNorma: updatedUser.dailyNorma,
-    },
-  });
-};
-
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
 
@@ -138,10 +122,6 @@ const updateAvatar = async (req, res) => {
 const updateWaterRate = async (req, res) => {
   const { _id } = req.user;
   const { dailyNorma } = req.body;
-
-  if (dailyNorma > 15000) {
-    throw HttpError(400, "The daily rate can be a maximum of 15 l");
-  }
 
   const updatedUser = await authServices.updateUser(
     _id,

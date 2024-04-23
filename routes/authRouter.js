@@ -24,14 +24,6 @@ userRouter.get("/current", authenticate, authController.getCurrent);
 userRouter.post("/logout", authenticate, authController.signout);
 
 userRouter.patch(
-  "/",
-  authenticate,
-  validateBody(userSchemas.userUpdateSchema),
-  authController.updateUser
-);
-
-
-userRouter.patch(
   "/avatars",
   authenticate,
   upload.single("avatar"),

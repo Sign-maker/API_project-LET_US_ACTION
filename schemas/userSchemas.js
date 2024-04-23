@@ -3,18 +3,26 @@ import { emailRegexp, genderList } from "../constants/user-constants.js";
 import { waterLimits } from "../constants/water-constants.js";
 
 const userSignUpSchema = Joi.object({
-  email: Joi.string().pattern(emailRegexp).required(),
+  email: Joi.string().pattern(emailRegexp).required().messages({
+    "any.required": "missing required email field",
+    "string.pattern.base": "The email must be in format test@gmail.com.",
+  }),
   password: Joi.string().min(8).max(64).required(),
 });
 
 const userSignInSchema = Joi.object({
-  email: Joi.string().pattern(emailRegexp).required(),
+  email: Joi.string().pattern(emailRegexp).required().messages({
+    "any.required": "missing required email field",
+    "string.pattern.base": "The email must be in format test@gmail.com.",
+  }),
   password: Joi.string().min(8).max(64).required(),
 });
 
 const userUpdateSchema = Joi.object({
   name: Joi.string().max(32),
-  email: Joi.string().pattern(emailRegexp),
+  email: Joi.string().pattern(emailRegexp).message({
+    "string.pattern.base": "The email must be in format test@gmail.com.",
+  }),
   gender: Joi.string().valid(...genderList),
   password: Joi.string().min(8).max(64),
   newPassword: Joi.string().min(8).max(64),
