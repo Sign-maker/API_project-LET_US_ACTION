@@ -23,8 +23,6 @@ const signup = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
-  // const avatarURL = gravatar.url(req.body.email, { s: 250, d: "mp" });
-
   const newUser = await authServices.signup({
     ...req.body,
   });
@@ -138,7 +136,6 @@ const updateWaterRate = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-  console.log(req.body);
   const { _id } = req.user;
   const { name, email, gender, password, newPassword } = req.body;
 
@@ -194,7 +191,6 @@ export default {
   signin: ctrlWrapper(signin),
   getCurrent: ctrlWrapper(getCurrent),
   signout: ctrlWrapper(signout),
-  updateUser: ctrlWrapper(updateUser),
   updateAvatar: ctrlWrapper(updateAvatar),
   updateWaterRate: ctrlWrapper(updateWaterRate),
   updateProfile: ctrlWrapper(updateProfile),

@@ -89,9 +89,6 @@ const deleteWater = async (req, res) => {
     throw httpError(404);
   }
 
-  console.log(water);
-  console.log(water.waterNotes);
-
   const { waterVolume } = water.waterNotes.find((water) => water.id === id);
 
   const deletedWater = await waterServices.deleteCountWater({
@@ -133,15 +130,10 @@ const getByMonth = async (req, res) => {
   const { _id: owner } = req.user;
   const { date } = req.params;
   const [year, month] = date.split("-");
-  // const startDate = new Date(year, month - 1, 1);
-  // const endDate = new Date(year, month, 0);
 
-  //   const startDate = new Date(Date.UTC(year, month - 1, 1));
-  //   const endDate = new Date(Date.UTC(year, month, 0));
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 0);
   endDate.setHours(23, 59, 59, 999);
-  console.log(startDate, endDate);
 
   const waterOfMonth = await waterServices.getEntriesMonthly({
     owner,
@@ -160,42 +152,6 @@ const getByMonth = async (req, res) => {
       };
     }
   );
-
-  // if (!waterOfMonth.length) {
-  //   throw httpError(404);
-  // }
-  // .setHours(0, 0, 0,0)
-
-  // const monthlyData = [];
-
-  // for (let day = 1; day <= endDate.getDate(); day++) {
-  //   const currentDate = new Date(Date.UTC(year, month - 1, day));
-  //   const waterDay = waterOfMonth.find(entry => entry.date.getDate() === day);
-  //   // Если для текущего дня есть данные о потреблении воды
-  //   if (waterDay) {
-  //     const dailyPercentage = Math.floor((waterDay.totalVolume / waterDay.dailyNorma) * 100);
-  //     monthlyData.push({
-  //       id: waterDay._id,
-  //       date: currentDate,
-  //       amountOfWater: waterDay.waterNotes.length,
-  //       dailyNorma: waterDay.dailyNorma,
-  //       percentage: dailyPercentage
-  //     });
-  //   }
-  // else {
-  //   // Если для текущего дня нет данных, добавляем пустую запись
-  //   monthlyData.push({
-  //     id: null,
-  //     date: currentDate,
-  //     amountOfWater: 0,
-  //     dailyNorma: null,
-  //     percentage: null
-  //   });
-  // }
-  // }
-  // if (!monthlyData.length) {
-  //   throw httpError(404);
-  // }
 
   res.json({ month: waterOfMonthWithCalculation });
 };
