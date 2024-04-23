@@ -11,13 +11,6 @@ const addWater = async (req, res) => {
   const date = new Date();
   let newWater = null;
 
-  if (waterVolume > waterLimits.MAX_ONE_TIME_WATER_VALUE) {
-    throw httpError(
-      400,
-      `waterVolume cannot exceed ${waterLimits.MAX_ONE_TIME_WATER_VALUE}`
-    );
-  }
-
   const dailyNorma = await waterServices.getDailyNorma(owner);
 
   newWater = await waterServices.findWaterByDate({ owner, date });
