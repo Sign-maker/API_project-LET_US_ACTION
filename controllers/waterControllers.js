@@ -8,7 +8,10 @@ import { calcFulfillment } from "../helpers/calcFulfillment";
 const addWater = async (req, res) => {
   const { waterVolume } = req.body;
   const { _id: owner } = req.user;
+
   const date = new Date();
+  date.setHours(0, 0, 0, 0);
+
   let newWater = null;
 
   const dailyNorma = await waterServices.getDailyNorma(owner);
@@ -36,15 +39,9 @@ const updateWater = async (req, res) => {
   const { waterVolume } = req.body;
   const { id } = req.params;
   const { _id: owner } = req.user;
+
   const date = new Date();
   date.setHours(0, 0, 0, 0);
-
-  if (waterVolume > waterLimits.MAX_ONE_TIME_WATER_VALUE) {
-    throw httpError(
-      400,
-      `waterVolume cannot exceed ${waterLimits.MAX_ONE_TIME_WATER_VALUE}`
-    );
-  }
 
   const water = await waterServices.findWaterByDate({ owner, date });
 
@@ -81,7 +78,9 @@ const updateWater = async (req, res) => {
 const deleteWater = async (req, res) => {
   const { _id: owner } = req.user;
   const { id } = req.params;
+
   const date = new Date();
+  date.setHours(0, 0, 0, 0);
 
   const water = await waterServices.findWaterByDate({ owner, date });
 
@@ -111,7 +110,13 @@ const getByDay = async (req, res) => {
   const dailyWater = await waterServices.getNotesDaily({ owner });
 
   const dayResult = !dailyWater
-    ? { dailyNorma: req.user.dailyNorma }
+    ? {
+        servingsCount: null,
+        fulfillment: null,
+        dayNotes: [],
+        totalVolume: null,
+        dailyNorma: req.user.dailyNorma,
+      }
     : {
         servingsCount: dailyWater.waterNotes.length,
         fulfillment: calcFulfillment(

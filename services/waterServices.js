@@ -33,8 +33,6 @@ export const getDailyNorma = async (owner) => {
 };
 
 export const findWaterByDate = async ({ owner, date }) => {
-  date.setHours(0, 0, 0, 0);
-
   const water = await Water.findOne({
     date: {
       $gte: date,
@@ -59,7 +57,7 @@ export const addCountWater = async ({ body, owner, waterId }) => {
 
 export const createWater = async ({ owner, dailyNorma, date }) => {
   const newData = await Water.create({
-    date: date.setHours(0, 0, 0, 0),
+    date,
     dailyNorma,
     waterNotes: [],
     totalVolume: 0,
