@@ -9,7 +9,7 @@ const addWater = async (req, res) => {
   const { waterVolume } = req.body;
   const { _id: owner } = req.user;
 
-  const date = new Date();
+  const date = new Date(req.body.date);
   date.setHours(0, 0, 0, 0);
 
   let newWater = null;
