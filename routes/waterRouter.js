@@ -3,7 +3,10 @@ import validateBody from "../helpers/validateBody.js";
 import waterSchemas from "../schemas/waterSchemas.js";
 import { authenticate } from "../middlewares/authenticate.js";
 import { isValidId } from "../middlewares/isValidId.js";
-import { isValidDate } from "../middlewares/isValidDate.js";
+import {
+  isValidDateUTC,
+  isValidDateUTCMonth,
+} from "../middlewares/isValidDate.js";
 import waterController from "../controllers/waterControllers.js";
 
 const waterRouter = express.Router();
@@ -11,6 +14,7 @@ const waterRouter = express.Router();
 waterRouter.post(
   "/",
   authenticate,
+  isValidDateUTC,
   validateBody(waterSchemas.waterSchema),
   waterController.addWater
 );
@@ -18,6 +22,7 @@ waterRouter.post(
 waterRouter.patch(
   "/:id",
   authenticate,
+  isValidDateUTC,
   isValidId,
   validateBody(waterSchemas.updateWaterSchema),
   waterController.updateWater
@@ -26,6 +31,7 @@ waterRouter.patch(
 waterRouter.delete(
   "/:id",
   authenticate,
+  isValidDateUTC,
   isValidId,
   waterController.deleteWater
 );
@@ -33,13 +39,14 @@ waterRouter.delete(
 waterRouter.get(
   "/today",
   authenticate,
+  isValidDateUTC,
   waterController.getByDay
 );
 
 waterRouter.get(
-  "/month/:date",
+  "/month",
   authenticate,
-  isValidDate,
+  isValidDateUTCMonth,
   waterController.getByMonth
 );
 

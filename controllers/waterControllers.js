@@ -2,24 +2,38 @@ import * as waterServices from "../services/waterServices.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import httpError from "../helpers/HttpError.js";
 
-import { waterLimits } from "../constants/water-constants.js";
 import { calcFulfillment } from "../helpers/calcFulfillment";
+
+const getDayBorders = (startOfDay) => {
+  const dayStart = new Date(startOfDay);
+  const dayEnd = new Date(startOfDay);
+  dayEnd.setDate(dayEnd.getDate() + 1);
+  return { dayStart, dayEnd };
+};
+
+const getMonthBorders = (startOfMonth) => {
+  const monthStart = new Date(startOfMonth);
+  const monthEnd = new Date(startOfMonth);
+  monthEnd.setMonth(monthEnd.getMonth() + 1);
+  return { monthStart, monthEnd };
+};
 
 const addWater = async (req, res) => {
   const { waterVolume } = req.body;
   const { _id: owner } = req.user;
 
-  const date = new Date(req.body.date);
-  date.setHours(0, 0, 0, 0);
+  const { todayStart } = req.query;
+
+  const { dayStart, dayEnd } = getDayBorders(todayStart);
 
   let newWater = null;
 
   const dailyNorma = await waterServices.getDailyNorma(owner);
 
-  newWater = await waterServices.findWaterByDate({ owner, date });
+  newWater = await waterServices.getNotesDaily(owner, dayStart, dayEnd);
 
   if (!newWater) {
-    newWater = await waterServices.createWater({ owner, dailyNorma, date });
+    newWater = await waterServices.createWater(owner, dailyNorma, dayStart);
   }
 
   const amountWater = await waterServices.addCountWater({
@@ -39,11 +53,11 @@ const updateWater = async (req, res) => {
   const { waterVolume } = req.body;
   const { id } = req.params;
   const { _id: owner } = req.user;
+  const { todayStart } = req.query;
 
-  const date = new Date();
-  date.setHours(0, 0, 0, 0);
+  const { dayStart, dayEnd } = getDayBorders(todayStart);
 
-  const water = await waterServices.findWaterByDate({ owner, date });
+  const water = await waterServices.getNotesDaily(owner, dayStart, dayEnd);
 
   if (!water) {
     throw httpError(404);
@@ -78,11 +92,11 @@ const updateWater = async (req, res) => {
 const deleteWater = async (req, res) => {
   const { _id: owner } = req.user;
   const { id } = req.params;
+  const { todayStart } = req.query;
 
-  const date = new Date();
-  date.setHours(0, 0, 0, 0);
+  const { dayStart, dayEnd } = getDayBorders(todayStart);
 
-  const water = await waterServices.findWaterByDate({ owner, date });
+  const water = await waterServices.getNotesDaily(owner, dayStart, dayEnd);
 
   if (!water) {
     throw httpError(404);
@@ -94,7 +108,8 @@ const deleteWater = async (req, res) => {
     id,
     owner,
     waterVolume,
-    date,
+    dayStart,
+    dayEnd,
   });
 
   if (!deletedWater) {
@@ -106,8 +121,11 @@ const deleteWater = async (req, res) => {
 
 const getByDay = async (req, res) => {
   const { _id: owner } = req.user;
+  const { todayStart } = req.query;
 
-  const dailyWater = await waterServices.getNotesDaily({ owner });
+  const { dayStart, dayEnd } = getDayBorders(todayStart);
+
+  const dailyWater = await waterServices.getNotesDaily(owner, dayStart, dayEnd);
 
   const dayResult = !dailyWater
     ? {
@@ -133,18 +151,15 @@ const getByDay = async (req, res) => {
 
 const getByMonth = async (req, res) => {
   const { _id: owner } = req.user;
-  const { date } = req.params;
-  const [year, month] = date.split("-");
+  const { startOfMonth } = req.query;
 
-  const startDate = new Date(year, month - 1, 1);
-  const endDate = new Date(year, month, 0);
-  endDate.setHours(23, 59, 59, 999);
+  const { monthStart, monthEnd } = getMonthBorders(startOfMonth);
 
-  const waterOfMonth = await waterServices.getEntriesMonthly({
+  const waterOfMonth = await waterServices.getEntriesMonthly(
     owner,
-    startDate,
-    endDate,
-  });
+    monthStart,
+    monthEnd
+  );
 
   const waterOfMonthWithCalculation = waterOfMonth.map(
     ({ totalVolume, waterNotes, dailyNorma, date }) => {
@@ -158,7 +173,7 @@ const getByMonth = async (req, res) => {
     }
   );
 
-  res.json({ month: waterOfMonthWithCalculation });
+  res.json({ month: monthStart, monthNotes: waterOfMonthWithCalculation });
 };
 
 export default {
