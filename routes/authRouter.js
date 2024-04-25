@@ -4,6 +4,7 @@ import validateBody from "../helpers/validateBody.js";
 import userSchemas from "../schemas/userSchemas.js";
 import { authenticate } from "../middlewares/authenticate.js";
 import { upload } from "../middlewares/upload.js";
+import { isValidDateUTC } from "../middlewares/isValidDate.js";
 
 const userRouter = express.Router();
 
@@ -33,6 +34,7 @@ userRouter.patch(
 userRouter.patch(
   "/waterrate",
   authenticate,
+  isValidDateUTC,
   validateBody(userSchemas.waterRateSchema),
   authController.updateWaterRate
 );
