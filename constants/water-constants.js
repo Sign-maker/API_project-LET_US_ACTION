@@ -1,4 +1,5 @@
 export const yearMonthRegex = /^\d{4}-(0[1-9]|1[0-2])$/;
+export const dateUTCRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 export const minWaterCount = 1;
 export const maxWaterCount = 5000;

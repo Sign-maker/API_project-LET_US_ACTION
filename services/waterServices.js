@@ -55,9 +55,9 @@ export const addCountWater = async ({ body, owner, waterId }) => {
   return waterNotes[waterNotes.length - 1];
 };
 
-export const createWater = async ({ owner, dailyNorma, date }) => {
+export const createWater = async (owner, dailyNorma, dayStart) => {
   const newData = await Water.create({
-    date,
+    date: dayStart,
     dailyNorma,
     waterNotes: [],
     totalVolume: 0,
@@ -82,11 +82,18 @@ export const updateCountWater = async ({ owner, id, body, oldWaterVolume }) => {
   return updatedWater;
 };
 
-export const deleteCountWater = async ({ id, owner, waterVolume, date }) => {
+export const deleteCountWater = async ({
+  id,
+  owner,
+  waterVolume,
+  dayStart,
+  dayEnd,
+}) => {
   const deletedCount = await Water.findOneAndUpdate(
     {
       date: {
-        $gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+        $gte: dayStart,
+        $lt: dayEnd,
       },
       owner,
     },
@@ -100,12 +107,11 @@ export const deleteCountWater = async ({ id, owner, waterVolume, date }) => {
   return deletedCount;
 };
 
-export const getNotesDaily = async ({ owner }) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+export const getNotesDaily = async (owner, dayStart, dayEnd) => {
   const waterData = await Water.findOne({
     date: {
-      $gte: today,
+      $gte: dayStart,
+      $lt: dayEnd,
     },
     owner,
   });
@@ -113,9 +119,9 @@ export const getNotesDaily = async ({ owner }) => {
   return waterData;
 };
 
-export const getEntriesMonthly = async ({ owner, startDate, endDate }) => {
+export const getEntriesMonthly = async (owner, startDate, endDate) => {
   const waterOfMonth = await Water.find({
-    date: { $gte: startDate, $lte: endDate },
+    date: { $gte: startDate, $lt: endDate },
     owner,
   });
 
