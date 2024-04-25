@@ -270,7 +270,17 @@
         "tags": ["WaterRate"],
         "summary": "Set daily water consumption rate for user",
         "security": [{ "Bearer": [] }],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "todayStart",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2024-04-24T21:00:00.000Z"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -313,7 +323,17 @@
         "tags": ["Water"],
         "summary": "Add water consumption record for signed in user",
         "security": [{ "Bearer": [] }],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "todayStart",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2024-04-24T21:00:00.000Z"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -365,6 +385,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "todayStart",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2024-04-24T21:00:00.000Z"
           }
         ],
         "requestBody": {
@@ -416,6 +445,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "todayStart",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2024-04-24T21:00:00.000Z"
           }
         ],
         "responses": {
@@ -450,7 +488,17 @@
         "tags": ["Today"],
         "summary": "Get today's water consumption details",
         "security": [{ "Bearer": [] }],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "todayStart",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2024-04-24T21:00:00.000Z"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -478,20 +526,20 @@
         }
       }
     },
-    "/api/water/month/{date}": {
+    "/api/water/month": {
       "get": {
         "tags": ["Month"],
         "summary": "Get water consumption details for selected month",
         "security": [{ "Bearer": [] }],
         "parameters": [
           {
-            "name": "date",
-            "in": "path",
+            "in": "query",
+            "name": "startOfMonth",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "required": true,
-            "description": "Date for which to retrieve water consumption details, formatted as YYYY-MM"
+            "example": "2024-04-24T21:00:00.000Z"
           }
         ],
         "responses": {
@@ -768,7 +816,7 @@
             "description": "Daily water consumption rate in milliliters, must be between 1 and 15000"
           }
         },
-        "required": ["waterRate"]
+        "required": ["dailyNorma"]
       },
       "WaterRateResponse": {
         "type": "object",
@@ -910,18 +958,22 @@
         "type": "object",
         "properties": {
           "month": {
+            "type": "string",
+            "example": "2024-03-31T21:00:00.000Z"
+          },
+          "monthNotes": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
                 "date": {
                   "type": "string",
-                  "example": "YYYY-MM-DDTHH:MM:SS.SSSZ"
+                  "example": "2024-04-24T21:00:00.000Z"
                 },
-                "dailyNorma": { "type": "number", "example": 1700 },
-                "totalVolume": { "type": "number", "example": 5000 },
-                "fulfillment": { "type": "integer", "example": 44 },
-                "servingCount": { "type": "number", "example": 5 }
+                "dailyNorma": { "type": "number", "example": 6000 },
+                "totalVolume": { "type": "number", "example": 2200 },
+                "fulfillment": { "type": "integer", "example": 36 },
+                "servingsCount": { "type": "integer", "example": 2 }
               }
             }
           }
