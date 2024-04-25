@@ -1,22 +1,15 @@
 import { Water } from "../models/Water.js";
 import { User } from "../models/User.js";
 
-export const updateDailyNorma = async ({ owner, dailyNorma }) => {
-  const date = new Date();
-  const startOfDay = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate()
-  );
-  const endOfDay = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate() + 1
-  );
-
+export const updateDailyNorma = async ({
+  owner,
+  dailyNorma,
+  dayStart,
+  dayEnd,
+}) => {
   const waterData = await Water.findOneAndUpdate(
     {
-      date: { $gte: startOfDay, $lt: endOfDay },
+      date: { $gte: dayStart, $lt: dayEnd },
       owner,
     },
     { dailyNorma },

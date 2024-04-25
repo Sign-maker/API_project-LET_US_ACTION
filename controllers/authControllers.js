@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import fs from "fs/promises";
 
 import { updateDailyNorma } from "../services/waterServices.js";
+import { getDayBorders } from "../helpers/dateHelpers.js";
 
 const { JWT_SECRET } = process.env;
 
@@ -120,6 +121,9 @@ const updateAvatar = async (req, res) => {
 const updateWaterRate = async (req, res) => {
   const { _id } = req.user;
   const { dailyNorma } = req.body;
+  const { todayStart } = req.query;
+
+  const { dayStart, dayEnd } = getDayBorders(todayStart);
 
   const updatedUser = await authServices.updateUser(
     _id,
@@ -130,7 +134,7 @@ const updateWaterRate = async (req, res) => {
   if (!updatedUser) {
     throw HttpError(404, "User not found");
   }
-  await updateDailyNorma({ owner: _id, dailyNorma });
+  await updateDailyNorma({ owner: _id, dailyNorma, dayStart, dayEnd });
 
   res.json({ dailyNorma: updatedUser.dailyNorma });
 };
@@ -176,7 +180,6 @@ const updateProfile = async (req, res) => {
     });
   }
 
-  console.log(updatedUser);
   res.json({
     user: {
       name: updatedUser.name,
